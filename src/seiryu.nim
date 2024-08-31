@@ -1,7 +1,21 @@
-# This is just an example to get you started. A typical library package
-# exports the main API in this file. Note that you cannot rename this file
-# but you can remove it if you wish.
+import
+  std/[macros],
+  seiryu/private/macro_utils
 
-proc add*(x, y: int): int =
-  ## Adds two numbers together.
-  return x + y
+macro construct*(theProc: untyped): untyped =
+  theProc.expectKind({nnkProcDef, nnkFuncDef})
+
+  let T = theProc.params[0]
+  result = copy theProc
+
+  if theProc.body.kind == nnkEmpty:
+    result.body = newStmtList()
+    let identDefList = theProc.params[2..^1].formatIdentDefs()
+    for identDef in identDefList:
+      let variable = identDef[0]
+      result.body.add quote do:
+        result.`variable` = `variable`
+
+  result.body.insert 0, quote do:
+    result = `T`()
+
