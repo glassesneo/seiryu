@@ -1,7 +1,9 @@
 import
   std/[macros]
 
-func formatIdentDefs*(defList: NimNode | seq[NimNode]): seq[NimNode] =
+func formatIdentDefs*(
+    defList: NimNode | seq[NimNode]
+): seq[NimNode] {.compileTime.} =
   result = @[]
   for identDefs in defList:
     for v in identDefs[0..^3]:
