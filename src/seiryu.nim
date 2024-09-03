@@ -29,3 +29,17 @@ macro construct*(theProc: untyped): untyped =
   result.body.insert 0, quote do:
     result = `T`()
 
+macro getter*(theProc: untyped): untyped =
+  theProc.expectKind({nnkProcDef, nnkFuncDef})
+
+  if theProc.body.kind != nnkEmpty:
+    error "The body must be empty"
+
+  result = theProc.copy()
+  let
+    valueName = theProc[0].basename
+    objectName = theProc.params[1][0]
+
+  result.body = quote do:
+    return `objectName`.`valueName`
+
