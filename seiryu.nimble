@@ -1,10 +1,10 @@
 # Package
 
-version       = "0.1.0"
-author        = "glassesneo"
-description   = "A new awesome nimble package"
-license       = "MIT"
-srcDir        = "src"
+version = "0.1.0"
+author = "glassesneo"
+description = "Streamline your Nim code"
+license = "MIT"
+srcDir = "src"
 
 
 # Dependencies
