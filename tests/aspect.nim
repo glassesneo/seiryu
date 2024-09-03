@@ -2,11 +2,11 @@ import
   ../src/seiryu/aop
 
 advice log:
-  pre:
-    echo "pre!"
+  before:
+    echo "start"
 
-  post:
-    echo "post!"
+  after:
+    echo "finish"
 
 proc f(a, b: int): int {.log.} =
   return a + b

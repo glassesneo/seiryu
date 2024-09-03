@@ -59,10 +59,10 @@ Class invariant is not implemented for now.
 ```nim
 # create an advice
 advice log:
-  pre:
+  before:
     echo "start process"
 
-  post:
+  after:
     echo "finish process"
 
 # attach `log` advice
@@ -86,7 +86,7 @@ import
   std/options
 
 advice log:
-  post:
+  after:
     echo "done!"
 
 proc new*(T: type SomeObject; v1: string, v2: Option[int]): T {.construct, log.} =

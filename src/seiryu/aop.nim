@@ -8,7 +8,7 @@ export
 {.pop.}
 
 macro advice*(name, body: untyped): untyped =
-  var preBlock, postBlock = quote:
+  var beforeBlock, afterBlock = quote:
     block:
       discard
 
@@ -18,13 +18,13 @@ macro advice*(name, body: untyped): untyped =
 
     let process = node[1]
     case node[0].strVal
-    of "pre":
-      preBlock = quote:
+    of "before":
+      beforeBlock = quote:
         block:
           `process`
 
-    of "post":
-      postBlock = quote:
+    of "after":
+      afterBlock = quote:
         defer:
           `process`
 
@@ -34,6 +34,6 @@ macro advice*(name, body: untyped): untyped =
   result = quote("@") do:
     macro `@name`*(theProc: untyped): untyped =
       result = theProc.copy()
-      result.body.insert 0, quote do: `@postBlock`
-      result.body.insert 0, quote do: `@preBlock`
+      result.body.insert 0, quote do: `@afterBlock`
+      result.body.insert 0, quote do: `@beforeBlock`
 
