@@ -1,7 +1,14 @@
 import
   std/[macros, strformat]
 
-const IgnoredNodeKinds = {nnkVarSection, nnkAsgn, nnkForStmt, nnkIfStmt}
+const IgnoredNodeKinds = {
+  nnkVarSection,
+  nnkLetSection,
+  nnkConstSection,
+  nnkAsgn,
+  nnkForStmt,
+  nnkIfStmt
+}
 
 func assertionInfoFormat*(filename: string, line: int): string =
   return fmt"[{filename}:{line}]"

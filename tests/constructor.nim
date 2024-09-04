@@ -8,15 +8,17 @@ type
   TestObject = object
     v1: int
     v2: string
+    v3: string
 
   TestObjectRef = ref TestObject
 
 block:
-  func init(T: type TestObject; v1: int; v2: string): T {.construct.} =
+  func init(T: type TestObject; v1: int; v2, v3: string): T {.construct.} =
     result.v1 = v1
     result.v2 = v2
+    result.v3 = v3
 
-  let _ = TestObject.init(1, "")
+  let _ = TestObject.init(1, "", "")
 
   func new(T: type TestObjectRef; v1: int; v2: string): T {.construct.} =
     result.v1 = v1
@@ -25,9 +27,9 @@ block:
   let _ = TestObjectRef.new(1, "")
 
 block:
-  func init(T: type TestObject; v1: int; v2: string): T {.construct.}
+  func init(T: type TestObject; v1: int; v2, v3: string): T {.construct.}
 
-  let _ = TestObject.init(1, "")
+  let _ = TestObject.init(1, "", "")
 
 block:
   func init(T: type TestObject; v1: int; v2: Option[string]): T {.construct.} =

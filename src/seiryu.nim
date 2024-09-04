@@ -9,15 +9,20 @@ macro construct*(theProc: untyped): untyped =
   theProc.expectKind({nnkProcDef, nnkFuncDef})
 
   let T = theProc.params[0]
-  result = theProc.copy()
-
   let identDefList = theProc.params[2..^1].formatIdentDefs()
 
-  for i, identDef in identDefList:
-    result.params[i+2] = identDef.copy()
+  result = theProc.copy()
+  result.params = nnkFormalParams.newTree(
+    theProc.params[0],
+    theProc.params[1]
+  )
+
+  for identDef in identDefList:
+    let param = identDef.copy()
     if identDef[1].isOption and identDef[2].kind == nnkEmpty:
       let generic = identDef[1][1]
-      result.params[i+2][2] = quote do: none(`generic`)
+      param[2] = quote do: none(`generic`)
+    result.params.add param
 
   if theProc.body.kind == nnkEmpty:
     result.body = newStmtList()
