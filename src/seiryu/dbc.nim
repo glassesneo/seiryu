@@ -1,5 +1,5 @@
 import
-  std/[macros, strformat]
+  std/[macros, strutils]
 
 const IgnoredNodeKinds = {
   nnkVarSection,
@@ -11,7 +11,7 @@ const IgnoredNodeKinds = {
 }
 
 func assertionInfoFormat*(filename: string, line: int): string =
-  return fmt"[{filename}:{line}]"
+  return "[$1:$2]" % [filename, $line]
 
 func createAssertionNode*(
     condition, assertOutput, info: NimNode,

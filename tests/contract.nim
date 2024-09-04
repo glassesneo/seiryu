@@ -19,5 +19,5 @@ func f(a, b: int): int =
 
   return a + b
 
-discard f(5, 14)
+discard f(5, 4)
 
