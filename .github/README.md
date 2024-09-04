@@ -4,6 +4,9 @@ seiryu is a nimble package for improving your Nim code with its sophisticated ma
 ## What seiryu provides
 ### constructor
 ```nim
+import
+  pkg/seiryu
+
 type
   Player = object
     name: string
@@ -33,6 +36,9 @@ let
 
 ### Design by Contract
 ```nim
+import
+  pkg/seiryu/dbc
+
 func fn(a, b: int): int =
   precondition:
     # `fn` must meet all the conditions
@@ -57,6 +63,9 @@ Class invariant is not implemented for now.
 
 ### Aspect Oriented Programming
 ```nim
+import
+  pkg/seiryu/aop
+
 # create an advice
 advice log:
   before:
@@ -80,10 +89,11 @@ output:
 ```
 
 ## The principles of seiryu
-Each macro in seiryu is implemented not to affect the others so you can attach multiple techniques to one procedure like this.
+Each macro in seiryu is implemented not to affect the others so you can attach multiple techniques to one procedure like this:
 ```nim
 import
-  std/options
+  std/options,
+  pkg/[seiryu, seiryu/dbc, seiryu/aop]
 
 advice log:
   after:
