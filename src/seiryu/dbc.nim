@@ -7,13 +7,13 @@ func assertionInfoFormat*(filename: string, line: int): string =
   return fmt"[{filename}:{line}]"
 
 func createAssertionNode*(
-    condition, process, info: NimNode,
+    condition, assertOutput, info: NimNode,
     assertMsg: string
 ): NimNode {.compileTime.} =
   let ast = condition.toStrLit()
   let assertMsgLit = assertMsg.newLit()
 
-  return if process == (quote do: nil):
+  return if assertOutput.kind == nnkEmpty:
     quote do:
       if not `condition`:
         let infoMsg = assertionInfoFormat(`info`.filename, `info`.line)
@@ -21,44 +21,53 @@ func createAssertionNode*(
   else:
     quote do:
       if not `condition`:
-        `process`
         let infoMsg = assertionInfoFormat(`info`.filename, `info`.line)
-        raiseAssert(`assertMsgLit` & infoMsg & `ast` & "\n")
+        raiseAssert(`assertMsgLit` & infoMsg & `ast` & "\n" & `assertOutput` & "\n")
 
-macro precondition*(stmtList: untyped, process: untyped = nil): untyped =
+macro precondition*(stmtList: untyped): untyped =
   let
     conditionList = newStmtList()
     info = ident"info"
 
   var condition = newStmtList()
+  var assertOutput = newEmptyNode()
   for stmt in stmtList:
-    condition.add stmt
-    if stmt.kind notin IgnoredNodeKinds:
-      conditionList.add createAssertionNode(
-        condition, process, info,
-        "Precondition failed at "
-      )
-      condition = newStmtList()
+    if stmt.len != 0 and stmt[0].eqIdent"output":
+      assertOutput = stmt[1]
+    else:
+      condition.add stmt
+      if stmt.kind notin IgnoredNodeKinds:
+        conditionList.add createAssertionNode(
+          condition, assertOutput, info,
+          "Precondition failed at "
+        )
+        condition = newStmtList()
+        assertOutput = newEmptyNode()
 
   result = quote do:
     when compileOption "assertions":
       let `info` = instantiationInfo()
       `conditionList`
 
-macro postcondition*(stmtList: untyped, process: untyped = nil): untyped =
+macro postcondition*(stmtList: untyped): untyped =
   let
     conditionList = newStmtList()
     info = ident"info"
 
   var condition = newStmtList()
+  var assertOutput = newEmptyNode()
   for stmt in stmtList:
-    condition.add stmt
-    if stmt.kind notin IgnoredNodeKinds:
-      conditionList.add createAssertionNode(
-        condition, process, info,
-        "Postcondition failed at "
-      )
-      condition = newStmtList()
+    if stmt.len != 0 and stmt[0].eqIdent"output":
+      assertOutput = stmt[1]
+    else:
+      condition.add stmt
+      if stmt.kind notin IgnoredNodeKinds:
+        conditionList.add createAssertionNode(
+          condition, assertOutput, info,
+          "Postcondition failed at "
+        )
+        condition = newStmtList()
+        assertOutput = newEmptyNode()
 
   result = quote do:
     when compileOption "assertions":
