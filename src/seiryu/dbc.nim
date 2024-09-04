@@ -17,19 +17,18 @@ func createAssertionNode*(
     condition, assertOutput, info: NimNode,
     assertMsg: string
 ): NimNode {.compileTime.} =
-  let ast = condition.toStrLit()
   let assertMsgLit = assertMsg.newLit()
 
   return if assertOutput.kind == nnkEmpty:
     quote do:
       if not `condition`:
         let infoMsg = assertionInfoFormat(`info`.filename, `info`.line)
-        raiseAssert(`assertMsgLit` & infoMsg & `ast` & "\n")
+        raiseAssert(`assertMsgLit` & infoMsg & "\n")
   else:
     quote do:
       if not `condition`:
         let infoMsg = assertionInfoFormat(`info`.filename, `info`.line)
-        raiseAssert(`assertMsgLit` & infoMsg & `ast` & "\n" & `assertOutput` & "\n")
+        raiseAssert(`assertMsgLit` & infoMsg & "\n" & `assertOutput` & "\n")
 
 macro precondition*(stmtList: untyped): untyped =
   let
