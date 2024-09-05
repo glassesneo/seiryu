@@ -1,6 +1,11 @@
 # seiryu
 seiryu is a nimble package for improving your Nim code with its sophisticated macros.
 
+## Installation
+```sh
+nimble install seiryu
+```
+
 ## What seiryu provides
 ### constructor
 ```nim
@@ -96,8 +101,11 @@ import
   pkg/[seiryu, seiryu/dbc, seiryu/aop]
 
 advice log:
+  before:
+    echo "start!"
+
   after:
-    echo "done!"
+    echo "finish!"
 
 proc new*(T: type SomeObject; v1: string, v2: Option[int]): T {.construct, log.} =
   precondition:
