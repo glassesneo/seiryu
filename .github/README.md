@@ -22,7 +22,11 @@ func init(T: type Player; name: string): T {.construct.} =
   result.hp = 50
 
 # Every argument is assigned to each field.
-func init(T: type Player; name: string, hp: int): T {.construct.}
+func init(T: type Player; name: string = "player", hp: int): T {.construct.}
+
+let
+  player1 = Player.init("player")
+  player2 = Player.init(hp = 50)
 ```
 
 ```nim
