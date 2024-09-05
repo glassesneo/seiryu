@@ -1,3 +1,4 @@
+{.push raises: [].}
 import
   std/[macros]
 

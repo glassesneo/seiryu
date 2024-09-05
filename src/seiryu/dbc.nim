@@ -1,5 +1,6 @@
+{.push raises: [].}
 import
-  std/[macros, strutils]
+  std/[macros]
 
 const IgnoredNodeKinds = {
   nnkVarSection,
@@ -10,25 +11,29 @@ const IgnoredNodeKinds = {
   nnkIfStmt
 }
 
-func assertionInfoFormat*(filename: string, line: int): string =
-  return "[$1:$2]" % [filename, $line]
-
 func createAssertionNode*(
     condition, assertOutput, info: NimNode,
     assertMsg: string
 ): NimNode {.compileTime.} =
   let assertMsgLit = assertMsg.newLit()
 
-  return if assertOutput.kind == nnkEmpty:
+  let assertNode = if assertOutput.kind == nnkEmpty:
     quote do:
-      if not `condition`:
-        let infoMsg = assertionInfoFormat(`info`.filename, `info`.line)
-        raiseAssert(`assertMsgLit` & infoMsg & "\n")
+      raiseAssert(
+        `assertMsgLit` &
+        "[" & `info`.filename & ":" & $`info`.line & "]" & "\n"
+      )
   else:
     quote do:
-      if not `condition`:
-        let infoMsg = assertionInfoFormat(`info`.filename, `info`.line)
-        raiseAssert(`assertMsgLit` & infoMsg & "\n" & `assertOutput` & "\n")
+      raiseAssert(
+        `assertMsgLit` &
+        "[" & `info`.filename & ":" & $`info`.line & "]" & "\n" &
+        `assertOutput` & "\n"
+      )
+
+  return quote do:
+    if not `condition`:
+      `assertNode`
 
 macro precondition*(stmtList: untyped): untyped =
   let

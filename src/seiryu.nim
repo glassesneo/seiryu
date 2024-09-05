@@ -1,3 +1,4 @@
+{.push raises: [].}
 import
   std/[macros],
   seiryu/private/macro_utils
