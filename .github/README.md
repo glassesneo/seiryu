@@ -43,6 +43,11 @@ let
   player2 = Player.initWithOptional(hp = 50)
 ```
 
+### getter
+```nim
+proc name*(player: Player): string {.getter.}
+```
+
 ### Design by Contract
 ```nim
 import
