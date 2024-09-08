@@ -125,5 +125,5 @@ proc new*(T: type SomeObject; v1: string, v2: Option[int]): T {.construct, log.}
 ```
 
 ## License
-ecslib is licensed under the MIT license. See COPYING for details.
+seiryu is licensed under the MIT license. See COPYING for details.
 
