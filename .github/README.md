@@ -124,3 +124,6 @@ proc new*(T: type SomeObject; v1: string, v2: Option[int]): T {.construct, log.}
   result.v2 = v2.get(otherwise = 50)
 ```
 
+## License
+ecslib is licensed under the MIT license. See COPYING for details.
+
