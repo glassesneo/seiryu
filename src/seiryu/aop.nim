@@ -1,11 +1,11 @@
+{.experimental: "strictFuncs".}
+{.experimental: "strictDefs".}
+{.experimental: "views".}
 {.push raises: [].}
-import
-  std/[macros]
+import std/macros
 
 {.push warning[deprecated]: off.}
-export
-  macros.body,
-  macros.newIdentNode
+export macros.body, macros.newIdentNode
 {.pop.}
 
 macro advice*(name, body: untyped): untyped =
@@ -23,18 +23,19 @@ macro advice*(name, body: untyped): untyped =
       beforeBlock = quote:
         block:
           `process`
-
     of "after":
       afterBlock = quote:
         defer:
           `process`
-
     else:
       error "Unsupported syntax", node[0]
 
-  result = quote("@") do:
-    macro `@name`*(theProc: untyped): untyped =
+  result = quote("@"):
+    macro `@ name`*(theProc: untyped): untyped =
       result = theProc.copy()
-      result.body.insert 0, quote do: `@afterBlock`
-      result.body.insert 0, quote do: `@beforeBlock`
-
+      result.body.insert 0,
+        quote do:
+          `@ afterBlock`
+      result.body.insert 0,
+        quote do:
+          `@ beforeBlock`

@@ -1,11 +1,14 @@
+{.experimental: "strictFuncs".}
+{.experimental: "strictDefs".}
+{.experimental: "views".}
 {.push raises: [].}
-import
-  std/[macros],
-  seiryu/private/macro_utils
+import std/macros
+import seiryu/private/macro_utils
 
 func isTypeDesc(typeNode: NimNode): bool {.compileTime.} =
-  return typeNode.kind == nnkCommand and typeNode[0].eqIdent"type" or
-  typeNode.kind == nnkBracketExpr and typeNode[0].eqIdent"typedesc"
+  return
+    typeNode.kind == nnkCommand and typeNode[0].eqIdent"type" or
+    typeNode.kind == nnkBracketExpr and typeNode[0].eqIdent"typedesc"
 
 func isOption(typeNode: NimNode): bool {.compileTime.} =
   return typeNode.kind == nnkBracketExpr and typeNode[0].eqIdent"Option"
@@ -16,19 +19,17 @@ macro construct*(theProc: untyped): untyped =
     error "The first argument must be a type itself", theProc.params[1]
 
   let T = theProc.params[0]
-  let identDefList = theProc.params[2..^1].formatIdentDefs()
+  let identDefList = theProc.params[2 ..^ 1].formatIdentDefs()
 
   result = theProc.copy()
-  result.params = nnkFormalParams.newTree(
-    theProc.params[0],
-    theProc.params[1]
-  )
+  result.params = nnkFormalParams.newTree(theProc.params[0], theProc.params[1])
 
   for identDef in identDefList:
     let param = identDef.copy()
     if identDef[1].isOption and identDef[2].kind == nnkEmpty:
       let generic = identDef[1][1]
-      param[2] = quote do: none(`generic`)
+      param[2] = quote:
+        none(`generic`)
     result.params.add param
 
   if theProc.body.kind == nnkEmpty:
@@ -38,8 +39,9 @@ macro construct*(theProc: untyped): untyped =
       result.body.add quote do:
         result.`variable` = `variable`
 
-  result.body.insert 0, quote do:
-    result = `T`()
+  result.body.insert 0,
+    quote do:
+      result = `T`()
 
 macro getter*(theProc: untyped): untyped =
   theProc.expectKind({nnkProcDef, nnkFuncDef})
@@ -55,6 +57,5 @@ macro getter*(theProc: untyped): untyped =
     valueName = theProc[0].basename
     objectName = theProc.params[1][0]
 
-  result.body = quote do:
+  result.body = quote:
     return `objectName`.`valueName`
-

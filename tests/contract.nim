@@ -1,5 +1,4 @@
-import
-  ../src/seiryu/dbc
+import ../src/seiryu/dbc
 
 func f(a, b: int): int =
   precondition:
@@ -7,7 +6,7 @@ func f(a, b: int): int =
     a > 0
     a > b
     var flag = true
-    for i in 0..<100:
+    for i in 0 ..< 100:
       if i == 100:
         flag = false
         break
@@ -20,4 +19,3 @@ func f(a, b: int): int =
   return a + b
 
 discard f(5, 4)
-
