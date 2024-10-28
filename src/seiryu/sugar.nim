@@ -34,3 +34,17 @@ func enter*(f: File): File =
 
 proc exit*(f: File) =
   f.close()
+
+type Comparable* =
+  concept a, b
+      `==`(a, b) is bool
+      `<`(a, b) is bool
+
+func `<=>`*(a, b: Comparable): range[-1 .. 1] =
+  return
+    if a == b:
+      0
+    elif a < b:
+      -1
+    else:
+      1
