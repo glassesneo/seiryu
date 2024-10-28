@@ -34,7 +34,7 @@ import
   std/options
 
 # arguments with `Option` become optional.
-func initWithOptional(T: type Player; name: Option[string], hp: int): T {.construct.}
+func initWithOptional(T: type Player; name: Option[string], hp: int): T {.construct.} =
   result.name = name.get(otherwise = "player")
   result.hp = hp
 
@@ -45,7 +45,41 @@ let
 
 ### getter
 ```nim
-proc name*(player: Player): string {.getter.}
+func name*(player: Player): string {.getter.}
+```
+
+### syntax sugar
+#### Context manager and with statement from Python🐍
+```nim
+with open("aaa.txt") as f:
+  ...
+
+type ContextManager = object
+
+func enter(cm: ContextManager): ContextManager =
+  debugEcho "enter called"
+  return cm
+
+func exit(cm: ContextManager) =
+  debugEcho "exit called"
+
+with ContextManager():
+  echo "aaa"
+
+#[
+output:
+  enter called
+  aaa
+  exit called
+]#
+```
+
+#### spaceship operator
+```nim
+let x = 5
+assert (x <=> 5) == 0
+assert (x <=> 3) == 1
+assert (x <=> 8) == -1
 ```
 
 ### Design by Contract
