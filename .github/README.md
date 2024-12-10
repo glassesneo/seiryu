@@ -74,7 +74,7 @@ output:
 ]#
 ```
 
-#### spaceship operator
+#### spaceship operator🐘
 ```nim
 let x = 5
 assert (x <=> 5) == 0
