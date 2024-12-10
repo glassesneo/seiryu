@@ -34,14 +34,21 @@ macro construct*(theProc: untyped): untyped =
 
   if theProc.body.kind == nnkEmpty:
     result.body = newStmtList()
+    result.body.add quote do:
+      result = `T`()
     for identDef in identDefList:
       let variable = identDef[0]
       result.body.add quote do:
         result.`variable` = `variable`
-
-  result.body.insert 0,
-    quote do:
+  elif theProc.body.len != 0 and theProc.body[0][0].eqIdent"precondition":
+    result.body = newStmtList()
+    result.body.add theProc.body[0]
+    result.body.add quote do:
       result = `T`()
+    for identDef in identDefList:
+      let variable = identDef[0]
+      result.body.add quote do:
+        result.`variable` = `variable`
 
 macro getter*(theProc: untyped): untyped =
   theProc.expectKind({nnkProcDef, nnkFuncDef})
@@ -49,13 +56,13 @@ macro getter*(theProc: untyped): untyped =
   if theProc.params[0].kind == nnkEmpty:
     error "The return value must not be empty", theProc.params[0]
 
-  if theProc.body.kind != nnkEmpty:
-    error "The body must be empty"
-
   result = theProc.copy()
   let
     valueName = theProc[0].basename
     objectName = theProc.params[1][0]
 
-  result.body = quote:
+  if theProc.body.kind == nnkEmpty:
+    result.body = newStmtList()
+
+  result.body.add quote do:
     return `objectName`.`valueName`
