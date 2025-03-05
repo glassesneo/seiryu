@@ -9,7 +9,7 @@ type
     v2: string
     v3: string
 
-  TestObjectRef = ref TestObject
+  # TestObjectRef = ref TestObject
 
 block:
   func init(T: type TestObject, v1: int, v2, v3: string): T {.construct.} =
@@ -19,11 +19,11 @@ block:
 
   let _ = TestObject.init(1, "", "")
 
-  func new(T: type TestObjectRef, v1: int, v2: string): T {.construct.} =
-    result.v1 = v1
-    result.v2 = v2
-
-  let _ = TestObjectRef.new(1, "")
+  # func new(T: type TestObjectRef, v1: int, v2: string): T {.construct.} =
+  #   result.v1 = v1
+  #   result.v2 = v2
+  #
+  # let _ = TestObjectRef.new(1, "")
 
 block:
   func init(T: type TestObject, v1: int, v2, v3: string): T {.construct.}
